@@ -1,0 +1,150 @@
+---
+title: "Homework 02 Exploring Gapminder"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Overview
+
+This Rmarkdown file aims to explore the gapminder dataset and use it as a cheatsheet for future data analysis and figure plotting. 
+
+## Import data frame and tidyverse pacakge
+
+Gapminder data will be used in this homework, and the dataset will be explored using "tidyverse" package. 
+
+```{r}
+library(gapminder)
+library(tidyverse)
+```
+## Some features of the dataset
+This part explores the features of the dataset. Including the tpye of the dataset, classes of the dataset, number of columns and rows of the dataset, and the data type of each vairables. These features of the dataset can be acquired by using R functions as "gapminder", "class", "ncol" and "nrow" (or "dim") , and "str" respectively. To obtain the size of the dataset, "ncol", "nrow", "dim", and "str" can be used. 
+
+```{r}
+print(gapminder)
+print(class(gapminder))
+print(ncol(gapminder))
+print(nrow(gapminder))
+print(dim(gapminder))
+print(str(gapminder))
+```
+
+## Explore individual variables
+
+Explore "continent" vairable and "lifeExp" variable.
+
+The possible values of a categorical vairable: continent can be obtained as follows.
+
+```{r}
+gapminder %>%
+  select(continent) %>% 
+  unique()
+```
+
+The range of a quantitative vairable : lifeExp can be obtained as follows.
+
+```{r}
+gapminder %>% 
+  select(lifeExp) %>% 
+  range()
+```
+
+The distribution of a categorical variable: continent can be obtained as follows. It shows how many entries each values has in the variable. It shows that the value "Africa" has the largest number of enties whereas the value "Oceania" has the least. 
+
+```{r}
+gapminder %>% 
+  ggplot(aes(continent)) +
+  geom_histogram(stat="count", color = "black", fill = "lightblue")
+```
+
+The distribution of a quantitative variable: "lifeExp" can be obtained as follows.
+
+```{r}
+gapminder %>% 
+  ggplot(aes(lifeExp)) +
+  geom_histogram(aes(y=..density..), color = "black", fill = "lightgreen") +
+  geom_density()
+```
+
+## Making various types of plots
+
+Different types of plots will be made in this part. 
+
+A scatterplot of two variables as "lifeExp" and "gdpPercap". A regression line that fits the points was added on top of the plot and it shows that variable gdpPercap and lifeExp is positively related.  
+
+```{r}
+gapminder %>%
+  ggplot(aes(log(gdpPercap), lifeExp)) +
+  geom_smooth(method = "lm", se=FALSE) +
+  geom_point(alpha=0.3, color = "red")
+```
+
+A kernel density of values that is greater than 100 million but smaller than 300 million in variable "pop". 
+
+```{r}
+gapminder %>%
+  filter(pop>100000000 & pop<300000000) %>% 
+  ggplot(aes(pop)) +
+  geom_histogram(aes(y=..density..), color = "black", fill = "pink") +
+  geom_density()
+```
+
+A boxplot of some countries and their population.
+
+```{r}
+gapminder %>%
+  filter(country=="Canada" | country == "Australia" | country == "Hong Kong, China") %>% 
+  ggplot(aes(country, log(pop))) +
+  geom_violin(aes(fill = country, alpha = 0.3)) +
+  geom_jitter()
+```
+
+## More explorations!
+
+The code given in the assginment works well. It will get the data for Rwanda and Afghanistan.
+
+```{r}
+filter(gapminder, country == c("Rwanda", "Afghanistan"))
+```
+
+Show numerical tables in a more attractive way.
+
+```{r}
+gapminder %>% 
+  select(country, lifeExp, year, gdpPercap) %>% 
+  filter(country == "Canada") %>% 
+  knitr::kable()
+```
+
+Using a couple of dplyr functions on a single table.
+
+```{r}
+gapminder %>% 
+  select(- gdpPercap) %>% 
+  filter(country %in% c("China", "Canada"), year %in% c(2002, 2007)) %>% 
+  arrange(desc(pop))
+```
+
+## Adapting some exercise from R for Data Science to the gapminder data set
+
+Q: Run ggplot(data = gapminder). What do you see?
+
+A: A blank plot.
+```{r}
+ggplot(gapminder)
+```
+
+Q: What does show.legend = FALSE do? What happens if you remove it?
+
+A: It removes the legend. An example is given as follows.
+
+Use geom_freqpoly() to overlay several histograms in the same plot.
+
+```{r}
+gapminder %>% 
+  ggplot(aes(lifeExp, colour = continent)) +
+  geom_freqpoly(bins = 20, show.legend = FALSE)
+```
+
