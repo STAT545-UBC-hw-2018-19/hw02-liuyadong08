@@ -11,5 +11,4 @@ The is the repository for STAT545 Homework 02. In this repository, there will be
 * A .gitignore file that you can ignore.
 
 Please feel free to look at and evaluate any of those **gapminder** files.
-=======
->>>>>>> 5ba91111608f7fc2f32df4c94d49df7d0345d299
+
